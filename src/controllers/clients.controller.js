@@ -3,18 +3,37 @@ import Client from "../models/client.schema.js";
 export const createClient = async (req, res) => {
   try {
     const { name, phoneNumber } = req.body;
+    
+    if (!phoneNumber) {
+      throw new Error('El número de teléfono es requerido');
+    }
+    
+    const cleanPhone = phoneNumber.toString().replace(/\D/g, '');
+    
+    if (cleanPhone.length !== 10) {
+      throw new Error('El número debe contener exactamente 10 dígitos');
+    }
 
-    const newClient = new Client({ name, phoneNumber });
+    const newClient = new Client({ 
+      name, 
+      phoneNumber: cleanPhone
+    });
 
     const savedClient = await newClient.save();
-
     res.status(201).json(savedClient);
+    
   } catch (error) {
-    // Si el phoneNumber ya existe, Mongoose lanzará un error con código 11000
     if (error.code === 11000) {
-      return res.status(400).json({ message: 'El número de teléfono ya está registrado.' });
+      return res.status(400).json({ message: 'El número ya está registrado' });
     }
-    res.status(500).json({ message: 'Error al crear el cliente', error });
+    
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message });
+    }
+
+    res.status(400).json({ 
+      message: error.message || 'Error al crear cliente' 
+    });
   }
 };
 
