@@ -9,6 +9,10 @@ const clientSchema = new mongoose.Schema({
     type: Date,
     required: [true, 'La fecha de servicio es obligatoria']
   },
+  address: {
+    type: String,
+    required: true
+  },
   type: {
     type: String,
     required: [true, 'El tipo de servicio es obligatorio'],
