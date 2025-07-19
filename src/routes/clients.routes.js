@@ -5,13 +5,14 @@ import {
     getClientById,
     updateClient,
     deleteClient
-} from "../controllers/clients.controller.js"
+} from "../controllers/clients.controller.js";
 
 const router = Router();
 
-router.get('/api/acCRM/clients', getAllClients)
-router.get('/api/acCRM/clients/:id', getClientById)
-router.post('/api/acCRM/clients/create', createClient)
-router.put('/api/acCRM/clients/update/:id', updateClient);
+router.get('/', getAllClients);
+router.get('/:id', getClientById);
+router.post('/', createClient);
+router.put('/:id', updateClient);
+router.delete('/:id', deleteClient);
 
 export default router;
