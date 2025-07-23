@@ -37,7 +37,6 @@ export const buildServicesFilter = (queryParams) => {
     }
   }
 
-  // Filtros por campos anidados (equipment)
   if (queryParams.gas) {
     filter['equipment.gas'] = queryParams.gas;
   }
