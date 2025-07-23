@@ -1,8 +1,8 @@
 class APIFeatures {
 
   constructor(query, queryString) {
-    this.query = query; // La consulta de Mongoose
-    this.queryString = queryString; // Los query params
+    this.query = query;
+    this.queryString = queryString;
   }
 
   filter() {

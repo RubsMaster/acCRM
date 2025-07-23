@@ -3,22 +3,18 @@
 export const buildServicesFilter = (queryParams) => {
   const filter = {};
 
-  // Filtro booleano por estado (done)
   if (queryParams.done) {
     filter.done = queryParams.done;
   }
 
-  // Filtro por referencia (client)
   if (queryParams.client) {
     filter.client = queryParams.client;
   }
 
-  // Filtro por valor de enum (type)
   if (queryParams.type) {
     filter.type = queryParams.type;
   }
 
-  // Filtro por rango de fechas (date)
   if (queryParams.dateStart || queryParams.dateEnd) {
     filter.date = {};
     if (queryParams.dateStart) {
@@ -31,7 +27,6 @@ export const buildServicesFilter = (queryParams) => {
     }
   }
 
-  // Filtro por rango de números (cost)
   if (queryParams.minCost || queryParams.maxCost) {
     filter.cost = {};
     if (queryParams.minCost) {

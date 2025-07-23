@@ -45,9 +45,9 @@ export const getAllServices = async (req, res) => {
 
     const services = await features.query.populate('client', 'name phoneNumber');
     res.status(200).json({
-      status: 'success',
-      results: services.length, 
+      ok: true,
       totalServices,
+      results: services.length, 
       totalPages: Math.ceil(totalServices / (parseInt(req.query.limit, 10) || 10)),
       currentPage: parseInt(req.query.page, 10) || 1,
       data: {
@@ -55,7 +55,7 @@ export const getAllServices = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener los servicios', error });
+    res.status(500).json({ ok: false, message: 'Error al obtener los servicios', error });
   }
 };
 
