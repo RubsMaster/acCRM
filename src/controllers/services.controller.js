@@ -1,6 +1,7 @@
 import Service from "../models/service.schema.js";
 import Client from "../models/client.schema.js";
-
+import { buildServicesFilter } from '../utils/filterBuilder.js'; 
+import APIFeatures from "../utils/apiFeatures.js";
 export const createService = async (req, res) => {
   try {
     const { client, date, address, type, cost, equipment } = req.body;
@@ -34,8 +35,25 @@ export const createService = async (req, res) => {
 
 export const getAllServices = async (req, res) => {
   try {
-    const services = await Service.find().populate('client', 'name phoneNumber');
-    res.status(200).json(services);
+    const filter = buildServicesFilter(req.query);
+
+    const totalServices = await Service.countDocuments(filter);
+
+    const features = new APIFeatures(Service.find(filter), req.query)
+      .sort()
+      .paginate();
+
+    const services = await features.query.populate('client', 'name phoneNumber');
+    res.status(200).json({
+      status: 'success',
+      results: services.length, 
+      totalServices,
+      totalPages: Math.ceil(totalServices / (parseInt(req.query.limit, 10) || 10)),
+      currentPage: parseInt(req.query.page, 10) || 1,
+      data: {
+        services,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los servicios', error });
   }

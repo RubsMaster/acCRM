@@ -9,3 +9,7 @@ export const connectDB = async () => {
     process.exit(1)
   }
 };
+mongoose.connection.on('error', err => {
+  console.error('Error de MongoDB:', err.message);
+});
+export default connectDB;
