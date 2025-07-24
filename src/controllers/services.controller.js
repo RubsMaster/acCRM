@@ -50,9 +50,7 @@ export const getAllServices = async (req, res) => {
       results: services.length, 
       totalPages: Math.ceil(totalServices / (parseInt(req.query.limit, 10) || 10)),
       currentPage: parseInt(req.query.page, 10) || 1,
-      data: {
-        services,
-      },
+      data: services,
     });
   } catch (error) {
     res.status(500).json({ ok: false, message: 'Error al obtener los servicios', error });
