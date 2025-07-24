@@ -37,16 +37,14 @@ export const getAllServices = async (req, res) => {
   try {
     const filter = buildServicesFilter(req.query);
 
-    const totalServices = await Service.countDocuments(filter);
-
     const features = new APIFeatures(Service.find(filter), req.query)
       .sort()
       .paginate();
 
     const services = await features.query.populate('client', 'name phoneNumber');
+    
     res.status(200).json({
       ok: true,
-      totalServices,
       results: services.length, 
       totalPages: Math.ceil(totalServices / (parseInt(req.query.limit, 10) || 10)),
       currentPage: parseInt(req.query.page, 10) || 1,
