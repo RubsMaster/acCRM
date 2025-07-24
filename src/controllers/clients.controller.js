@@ -41,7 +41,7 @@ export const getAllClients = async (req, res) => {
   try {
     const clients = await Client.find();
 
-    res.status(200).json(clients);
+    res.status(200).json({data: clients});
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los clientes', error });
   }
