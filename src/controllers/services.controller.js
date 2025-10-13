@@ -179,3 +179,27 @@ export const getDailyIncomeSummary = async (req, res) => {
     });
   }
 };
+
+export const updateServiceStatusController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { done } = req.body;
+
+    if (typeof done !== 'boolean') {
+      return res.status(400).json({ message: "El valor de 'done' debe ser verdadero o falso." });
+    }
+
+    const updatedService = await Service.findByIdAndUpdate(
+      id,
+      { done: done }, 
+      { new: true }
+    );
+
+    if (!updatedService) {
+      return res.status(404).json({ message: "Servicio no encontrado" });
+    }
+    res.status(200).json(updatedService);
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar el estado del servicio", error });
+  }
+};
