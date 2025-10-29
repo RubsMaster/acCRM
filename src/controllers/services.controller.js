@@ -56,7 +56,7 @@ export const getAllServices = async (req, res) => {
         totalServices / (parseInt(req.query.limit, 10) || 10)
       ),
       currentPage: parseInt(req.query.page, 10) || 1,
-      data: services
+      data: services,
     });
   } catch (error) {
     res
@@ -121,5 +121,85 @@ export const deleteService = async (req, res) => {
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ message: "Error al eliminar el servicio", error });
+  }
+};
+
+export const getDailyIncomeSummary = async (req, res) => {
+  try {
+    const today = new Date();
+    const startOfDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+    const endOfDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + 1
+    );
+
+    const incomeSumary = await Service.aggregate([
+      {
+        $match: {
+          done: true,
+          date: { $gte: startOfDay, $lt: endOfDay },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalIncome: { $sum: "$cost" },
+          totalServices: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalIncome: 1,
+          servicesCount: 1,
+        },
+      },
+    ]);
+    if (incomeSumary.length > 0) {
+      res.status(200).json({
+        ok: true,
+        data: incomeSumary[0],
+      });
+    } else {
+      res.status(200).json({
+        ok: true,
+        data: { totalIncome: 0, servicesCount: 0 },
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      message: "Error al calcular el resumen de ingresos diarios",
+      error: error.message,
+    });
+  }
+};
+
+export const updateServiceStatusController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { done } = req.body;
+
+    if (typeof done !== 'boolean') {
+      return res.status(400).json({ message: "El valor de 'done' debe ser verdadero o falso." });
+    }
+
+    const updatedService = await Service.findByIdAndUpdate(
+      id,
+      { done: done }, 
+      { new: true }
+    );
+
+    if (!updatedService) {
+      return res.status(404).json({ message: "Servicio no encontrado" });
+    }
+    res.status(200).json(updatedService);
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar el estado del servicio", error });
   }
 };
