@@ -20,7 +20,7 @@ export const createClient = async (req, res) => {
     });
 
     const savedClient = await newClient.save();
-    res.status(201).json(savedClient);
+    return res.status(201).json(savedClient);
     
   } catch (error) {
     if (error.code === 11000) {
@@ -31,7 +31,7 @@ export const createClient = async (req, res) => {
       return res.status(400).json({ message: error.message });
     }
 
-    res.status(400).json({ 
+    return res.status(400).json({ 
       message: error.message || 'Error al crear cliente' 
     });
   }
@@ -41,7 +41,7 @@ export const getAllClients = async (req, res) => {
   try {
     const clients = await Client.find();
 
-    res.status(200).json({data: clients.reverse()});
+    return res.status(200).json({data: clients.reverse()});
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los clientes', error });
   }
@@ -50,11 +50,9 @@ export const getAllClients = async (req, res) => {
 export const getClientById = async (req, res) => {
   try {
     const client = await Client.findById(req.params.id);
-
     if (!client) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
-
     res.status(200).json(client);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener el cliente', error });

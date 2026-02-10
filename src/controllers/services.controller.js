@@ -23,7 +23,7 @@ export const createService = async (req, res) => {
     });
 
     const savedService = await newService.save();
-    res.status(201).json(savedService);
+    return res.status(201).json(savedService);
   } catch (error) {
     if (error.name === "ValidationError") {
       return res.status(400).json({ message: error.message });
